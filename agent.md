@@ -171,8 +171,8 @@ generated config.plist, reference-machine regression fixture (Aurora R1 profile)
 
 1. alpha.2 image VERIFIED on the ThinkPad (E4, Omarchy). Aurora R1 re-test with the image: skipped by the owner (2026-11-20).
 2. Check the OpenCore text fallback started from `\EFI\OpenCore\` (finds its config.plist?).
-3. Licence GPL-3.0-or-later (ADR-0009); repository under git since 2026-11-20 (author loganxwolverine, GitHub noreply
-   e-mail). Still to do: publish it on GitHub (source offer for the GPL images).
+3. Licence GPL-3.0-or-later (ADR-0009). Source published 2026-11-20: https://github.com/loganxwolverine/Legacy2UEFI
+   (public, branch main). Next: attach the release image to a GitHub Release when the owner decides.
 4. Add the original mandate as `docs/MANDATE.md` and review the four DRAFT skills against it.
 5. Optional: OpenCore DEBUG build for real OpenCore logs (RELEASE logs nothing on an error-free boot).
 
