@@ -4,6 +4,11 @@ A universal USB key that gives BIOS-only x86-64 PCs a software UEFI environment 
 boot screen, so that UEFI-only operating systems can be installed and booted — without touching the firmware,
 and without Legacy2UEFI writing to internal disks.
 
+![The Legacy2UEFI boot screen on an Alienware Aurora R1 (BIOS-only, 2010), listing an installed Bazzite and the PC's specifications](tests/evidence/alienware-aurora-r1/2026-11-20/e3-l2u-screen-bazzite-installed.png)
+
+*The Legacy2UEFI boot screen on a BIOS-only Alienware Aurora R1: arrow keys to choose, Enter to boot — nothing
+starts on its own.*
+
 Status: **0.1.0-alpha.3** — verified on an Alienware Aurora R1 (Bazzite) and a Lenovo ThinkPad 4414WBF (Omarchy).
 Requires a USB keyboard. See [docs/releases/](docs/releases/).
 
