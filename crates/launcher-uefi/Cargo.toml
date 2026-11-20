@@ -1,0 +1,35 @@
+# Legacy2UEFI pre-OS launcher (ADR-0008): UEFI application, no_std.
+# Own workspace: it only builds for x86_64-unknown-uefi (see .cargo/config.toml).
+[workspace]
+resolver = "3"
+
+[package]
+name = "l2u-launcher"
+version = "0.1.0-alpha.3"
+edition = "2024"
+license = "GPL-3.0-or-later"
+publish = false
+build = "build.rs"
+
+[[bin]]
+name = "l2u-launcher"
+path = "src/main.rs"
+
+[dependencies]
+uefi = { version = "=0.41", features = ["alloc", "global_allocator"] }
+slint = { version = "=1.19.0", default-features = false, features = [
+  "compat-1-2", "renderer-software", "libm", "log", "unsafe-single-threaded",
+] }
+log = "0.4.21"
+
+[build-dependencies]
+slint-build = "=1.19.0"
+
+[profile.release]
+opt-level = "s"
+lto = true
+codegen-units = 1
+panic = "abort"
+
+[profile.dev]
+panic = "abort"

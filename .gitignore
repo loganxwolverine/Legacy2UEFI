@@ -1,0 +1,9 @@
+# Build outputs and extracted upstream archives (pinned by hash in docs, never committed)
+/build/*
+!/build/.gitkeep
+target/
+
+# Obsidian: keep shared settings (.obsidian/app.json), ignore per-machine window state
+/.obsidian/workspace*.json
+/.obsidian/cache
+/.trash/

@@ -1,0 +1,8 @@
+﻿bitflags v1.3.2 | MIT/Apache-2.0
+byteorder v1.5.0 | Unlicense OR MIT
+chrono v0.4.45 | MIT OR Apache-2.0
+fatfs v0.3.6 | MIT
+fscommon v0.1.1 | MIT
+log v0.4.35 | MIT OR Apache-2.0
+num-traits v0.2.19 | MIT OR Apache-2.0
+windows-link v0.2.1 | MIT OR Apache-2.0

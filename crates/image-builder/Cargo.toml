@@ -1,0 +1,14 @@
+# Legacy2UEFI key image builder: produces a raw disk image file (.img). It never opens a block device.
+[workspace]
+resolver = "3"
+
+[package]
+name = "l2u-image-builder"
+version = "0.1.0"
+edition = "2024"
+license = "GPL-3.0-or-later"
+publish = false
+
+[dependencies]
+fatfs = "=0.3.6"
+fscommon = "=0.1.1"

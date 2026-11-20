@@ -1,0 +1,9 @@
+{
+  "userIgnoreFilters": [
+    "build/",
+    "crates/launcher-uefi/target/"
+  ],
+  "useMarkdownLinks": true,
+  "newLinkFormat": "relative",
+  "attachmentFolderPath": "tests/evidence"
+}

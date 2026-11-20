@@ -1,0 +1,41 @@
+Legacy2UEFI {VERSION}
+=====================
+
+Cette clé apporte un environnement UEFI à un PC qui n'a qu'un BIOS Legacy, sans modifier le PC.
+
+Utilisation
+-----------
+1. Brancher la clé et un CLAVIER USB (obligatoire : les claviers PS/2 et la plupart des
+   claviers intégrés de portables ne sont pas pris en charge).
+2. Démarrer le PC sur la clé (touche du menu de démarrage du BIOS, souvent F12, ou clé USB
+   en premier dans l'ordre de démarrage du BIOS).
+3. L'écran Legacy2UEFI liste les disques internes et les clés USB démarrables.
+   Flèches pour choisir, Entrée pour démarrer. Rien ne démarre sans votre choix.
+
+Installer un système UEFI (ex. Bazzite)
+---------------------------------------
+Brancher aussi la clé d'installation du système (écrite directement, pas via Ventoy),
+la choisir dans l'écran Legacy2UEFI et installer normalement.
+Après l'installation, LAISSER la clé Legacy2UEFI branchée : le BIOS ne sait toujours pas
+démarrer un système UEFI tout seul. C'est l'installateur du système, pas Legacy2UEFI,
+qui modifie le disque interne.
+
+Limites connues
+---------------
+- Processeurs 64 bits (x86-64) uniquement.
+- Clavier USB obligatoire.
+- Les clés Ventoy ne démarrent pas à travers Legacy2UEFI.
+- Pas de Secure Boot.
+- Version alpha : testée sur Alienware Aurora R1 (validée) et Lenovo ThinkPad 4414WBF.
+
+Diagnostic
+----------
+Chaque démarrage ajoute un journal à L2U-LAUNCHER-LOG.txt sur cette clé.
+En cas de problème, joindre ce fichier (il ne contient ni numéro de série ni donnée personnelle).
+
+Licence
+-------
+Legacy2UEFI est un logiciel libre sous licence GPL-3.0-or-later (dossier LICENSES).
+Contenu tiers : OpenDuet + OpenCore 1.0.7 (acidanthera, BSD-3-Clause), Slint (GPL-3.0),
+police Inter (SIL OFL 1.1), bibliothèques Rust (licences listées dans LICENSES\rust-crates.txt).
+Code source : le dépôt du projet Legacy2UEFI.

@@ -1,0 +1,266 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (C) 2026 Legacy2UEFI contributors
+// Legacy2UEFI boot screen (ADR-0008). Designed for 1920×1080 and scaled by `s` (set from Rust to a discrete
+// step, see platform.rs SCALE_STEPS) so it fits any resolution from 800×600 to 1920×1080.
+// Every font size is written `<base>px * root.s` with a base listed in build.rs BASE_SIZES: the software
+// renderer embeds glyphs only at the pixel sizes build.rs declares.
+// Font: Inter (SIL OFL 1.1, see fonts/Inter-LICENSE.txt). Glyphs "…", "→", "—", arrows are not in this subset.
+import "fonts/Inter-24pt-Regular.ttf";
+
+export struct Spec {
+    label: string,
+    value: string,
+    known: bool,
+}
+
+// kind: 0 = internal system, 1 = USB key, 2 = tool, 3 = storage with nothing bootable
+export struct Item {
+    title: string,
+    subtitle: string,
+    kind: int,
+}
+
+component Tile inherits Rectangle {
+    in property <Item> item;
+    in property <bool> selected;
+    in property <bool> is-default;
+    in property <float> s: 1.0;
+    height: 112px * root.s;
+    border-radius: 16px * root.s;
+    background: root.selected ? #10241d : #141a23;
+    border-width: root.selected ? 3px : 1px;
+    border-color: root.selected ? #5DCAA5 : #28303c;
+    HorizontalLayout {
+        padding-left: 28px * root.s;
+        padding-right: 28px * root.s;
+        padding-top: 20px * root.s;
+        padding-bottom: 20px * root.s;
+        spacing: 24px * root.s;
+        Rectangle {
+            width: 10px * root.s;
+            border-radius: 5px * root.s;
+            background: root.item.kind == 1 ? #7F77DD : root.item.kind == 3 ? #3a4250 : #1D9E75;
+        }
+        VerticalLayout {
+            horizontal-stretch: 1;
+            alignment: center;
+            spacing: 6px * root.s;
+            Text { text: root.item.title; color: root.item.kind == 3 ? #6b7380 : #eef0f3; font-size: 32px * root.s; overflow: elide; }
+            Text { text: root.item.subtitle; color: #8b94a3; font-size: 20px * root.s; overflow: elide; }
+        }
+        if root.is-default : VerticalLayout {
+            horizontal-stretch: 0;
+            alignment: center;
+            Rectangle {
+                background: #085041;
+                border-radius: 8px * root.s;
+                HorizontalLayout {
+                    padding-left: 14px * root.s;
+                    padding-right: 14px * root.s;
+                    padding-top: 6px * root.s;
+                    padding-bottom: 6px * root.s;
+                    Text { text: "Par défaut"; color: #9FE1CB; font-size: 20px * root.s; }
+                }
+            }
+        }
+    }
+}
+
+export component Launcher inherits Window {
+    in property <[Spec]> specs;
+    in property <[Item]> items;
+    in property <[Item]> tools;
+    in property <int> default-index: -1;
+    in property <string> bridge-status;
+    in property <bool> bridge-ok;
+    in property <string> version;
+    in property <string> message;
+    in property <float> s: 1.0;
+    in-out property <int> selected: 0;
+    in-out property <int> countdown: 10;
+    in-out property <bool> counting: false;
+    callback activate(int);
+
+    property <int> total: root.items.length + root.tools.length;
+
+    background: #0b0e13;
+    default-font-family: "Inter 24pt";
+    forward-focus: keys;
+
+    // The software renderer embeds only ASCII plus characters written in this file. Text coming from
+    // Rust (device names, "Éteindre", "aperçu", "·") needs its characters listed here.
+    Text {
+        visible: false;
+        text: "ÀÂÄÇÉÈÊËÎÏÔÖÙÛÜŸàâäçéèêëîïôöùûüÿœŒæÆ·×°«»’ñÑß";
+    }
+
+    Timer {
+        interval: 1s;
+        running: root.counting;
+        triggered => {
+            root.countdown -= 1;
+            if (root.countdown <= 0) {
+                root.counting = false;
+                root.activate(root.default-index);
+            }
+        }
+    }
+
+    keys := FocusScope {
+        key-pressed(event) => {
+            root.counting = false;
+            if (event.text == Key.UpArrow || event.text == Key.LeftArrow) {
+                root.selected = max(0, root.selected - 1);
+                return accept;
+            }
+            if (event.text == Key.DownArrow || event.text == Key.RightArrow) {
+                root.selected = min(root.total - 1, root.selected + 1);
+                return accept;
+            }
+            if (event.text == Key.Return) {
+                root.activate(root.selected);
+                return accept;
+            }
+            return accept;
+        }
+    }
+
+    VerticalLayout {
+        padding-left: 72px * root.s;
+        padding-right: 72px * root.s;
+        padding-top: 52px * root.s;
+        padding-bottom: 40px * root.s;
+        spacing: 32px * root.s;
+
+        // Header
+        HorizontalLayout {
+            spacing: 24px * root.s;
+            Rectangle {
+                width: 84px * root.s;
+                height: 84px * root.s;
+                border-radius: 20px * root.s;
+                background: #0F6E56;
+                Text { text: "L2U"; color: #E1F5EE; font-size: 30px * root.s; horizontal-alignment: center; vertical-alignment: center; }
+            }
+            VerticalLayout {
+                alignment: center;
+                spacing: 4px * root.s;
+                Text { text: "Legacy2UEFI"; color: #eef0f3; font-size: 44px * root.s; }
+                Text { text: "Environnement UEFI démarré depuis un BIOS Legacy"; color: #8b94a3; font-size: 22px * root.s; overflow: elide; }
+            }
+            Rectangle { horizontal-stretch: 1; }
+            VerticalLayout {
+                alignment: center;
+                Rectangle {
+                    border-radius: 24px * root.s;
+                    border-width: 2px;
+                    border-color: root.bridge-ok ? #1D9E75 : #BA7517;
+                    HorizontalLayout {
+                        padding-left: 22px * root.s;
+                        padding-right: 22px * root.s;
+                        padding-top: 10px * root.s;
+                        padding-bottom: 10px * root.s;
+                        Text { text: root.bridge-status; color: root.bridge-ok ? #9FE1CB : #FAC775; font-size: 20px * root.s; }
+                    }
+                }
+            }
+        }
+
+        // Body
+        HorizontalLayout {
+            spacing: 36px * root.s;
+            vertical-stretch: 1;
+
+            VerticalLayout {
+                horizontal-stretch: 1.6;
+                spacing: 16px * root.s;
+                alignment: start;
+                Text { text: "Démarrer"; color: #c3c9d2; font-size: 26px * root.s; }
+                if root.items.length == 0 : Rectangle {
+                    height: 112px * root.s;
+                    border-radius: 16px * root.s;
+                    border-width: 1px;
+                    border-color: #28303c;
+                    Text {
+                        text: "Aucun système démarrable trouvé. Branchez une clé d'installation puis redémarrez.";
+                        color: #8b94a3;
+                        font-size: 22px * root.s;
+                        wrap: word-wrap;
+                    }
+                }
+                for it[i] in root.items : Tile {
+                    item: it;
+                    s: root.s;
+                    selected: root.selected == i;
+                    is-default: root.default-index == i;
+                }
+                Rectangle { height: 12px * root.s; }
+                Text { text: "Outils"; color: #c3c9d2; font-size: 26px * root.s; }
+                HorizontalLayout {
+                    spacing: 16px * root.s;
+                    for t[j] in root.tools : Rectangle {
+                        horizontal-stretch: 1;
+                        height: 76px * root.s;
+                        border-radius: 14px * root.s;
+                        background: root.selected == root.items.length + j ? #10241d : #141a23;
+                        border-width: root.selected == root.items.length + j ? 3px : 1px;
+                        border-color: root.selected == root.items.length + j ? #5DCAA5 : #28303c;
+                        Text {
+                            text: t.title;
+                            color: #dfe3e8;
+                            font-size: 22px * root.s;
+                            horizontal-alignment: center;
+                            vertical-alignment: center;
+                            overflow: elide;
+                        }
+                    }
+                }
+                if root.counting : VerticalLayout {
+                    spacing: 10px * root.s;
+                    padding-top: 12px * root.s;
+                    Text {
+                        text: "Démarrage automatique dans " + root.countdown + " s. Une touche pour arrêter.";
+                        color: #9FE1CB;
+                        font-size: 22px * root.s;
+                    }
+                }
+                if root.message != "" : Rectangle {
+                    border-radius: 12px * root.s;
+                    background: #3a1717;
+                    border-width: 1px;
+                    border-color: #A32D2D;
+                    HorizontalLayout {
+                        padding: 18px * root.s;
+                        Text { text: root.message; color: #F7C1C1; font-size: 20px * root.s; wrap: word-wrap; }
+                    }
+                }
+            }
+
+            Rectangle {
+                horizontal-stretch: 1;
+                border-radius: 18px * root.s;
+                background: #11161e;
+                border-width: 1px;
+                border-color: #28303c;
+                VerticalLayout {
+                    padding: 30px * root.s;
+                    spacing: 12px * root.s;
+                    alignment: start;
+                    Text { text: "Ce PC"; color: #c3c9d2; font-size: 26px * root.s; }
+                    for sp in root.specs : VerticalLayout {
+                        spacing: 2px * root.s;
+                        Text { text: sp.label; color: #8b94a3; font-size: 18px * root.s; }
+                        Text { text: sp.value; color: sp.known ? #eef0f3 : #6b7380; font-size: 23px * root.s; wrap: word-wrap; }
+                    }
+                }
+            }
+        }
+
+        // Footer
+        HorizontalLayout {
+            Text { text: "Flèches : choisir     Entrée : démarrer"; color: #8b94a3; font-size: 20px * root.s; }
+            Rectangle { horizontal-stretch: 1; }
+            Text { text: root.version; color: #5c6470; font-size: 18px * root.s; }
+        }
+    }
+}
