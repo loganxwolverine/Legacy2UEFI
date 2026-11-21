@@ -61,6 +61,22 @@ Le parcours complet (création puis mise à jour) a été validé sur une image 
 256 Mio et sur un périphérique bloc de test (`/dev/loop0`) dans une VM Solus :
 création OK, mise à jour alpha.3 → alpha.4 OK, MBR identique octet pour octet.
 
+### Hooks de test (variables d'environnement)
+
+Ces variables n'existent que pour les tests automatisés et la CI. Aucune n'est active par
+défaut ; elles sont listées ici pour que leur présence dans le code ne soit pas prise pour
+une porte dérobée.
+
+| Variable | Effet | Risque |
+|---|---|---|
+| `L2U_KEY_ALLOW_VIRTUAL=1` | Fait apparaître les périphériques virtuels (`loop`, `ram`) dans la liste et les autorise comme cible. Les cibles sont marquées « VIRTUEL (test) ». | À réserver aux tests : ne jamais l'activer pour un usage réel. |
+| `L2U_KEY_GUI_YES=1` | Répond « oui » aux boîtes de confirmation (« effacer la cible »). | Supprime la confirmation humaine : tests seulement. |
+| `L2U_KEY_GUI_DEV=<nom>` | Présélectionne un périphérique dans la liste. | Sans effet sur la sûreté. |
+| `L2U_KEY_GUI_IMG=<chemin>` | Précharge une image de release. | Sans effet sur la sûreté. |
+| `L2U_KEY_GUI_SELFTEST=inspect\|update` | Lance une opération automatiquement puis affiche statut et journal. | Tests seulement. |
+| `L2U_KEY_GUI_SMOKE_MS=<ms>` | Quitte après N millisecondes (fumée). | Sans effet sur la sûreté. |
+| `L2U_KEY_GUI_GEOM=1` | Vérifie la géométrie de la fenêtre puis quitte. | Sans effet sur la sûreté. |
+
 ## Limites connues
 
 - **Jamais testé sur une machine BIOS Legacy physique** : uniquement en VM et sur
