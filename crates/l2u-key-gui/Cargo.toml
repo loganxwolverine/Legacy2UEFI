@@ -1,0 +1,35 @@
+# Legacy2UEFI key manager — GUI Qt6 (qtrs) + CLI.
+#
+# Écrit une image de release Legacy2UEFI sur une clé USB, et met à jour une clé existante
+# en place (sans toucher au MBR ni au secteur de démarrage de la partition).
+# Le cœur (engine/device/key) est testable sans interface ; l'interface n'est qu'un client.
+[workspace]
+resolver = "3"
+
+[package]
+name = "l2u-key-gui"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.85.0"
+license = "GPL-3.0-or-later"
+description = "Crée et met à jour la clé USB bootable Legacy2UEFI (BIOS Legacy → UEFI logiciel)"
+publish = false
+
+[[bin]]
+name = "l2u-key-gui"
+path = "src/main.rs"
+
+[dependencies]
+qtrs = "0.5.9"
+cxx = "1.0"
+fatfs = "=0.3.6"
+fscommon = "=0.1.1"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+sha2 = "0.10"
+zip = { version = "2", default-features = false, features = ["deflate"] }
+ureq = { version = "2", default-features = false, features = ["tls"] }
+
+[profile.release]
+opt-level = 3
+strip = true
